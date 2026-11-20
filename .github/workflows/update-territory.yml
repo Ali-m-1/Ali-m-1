@@ -1,0 +1,48 @@
+name: Update language territory
+
+on:
+  schedule:
+    - cron: "17 7 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out profile repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: python -m pip install --requirement requirements.txt
+
+      - name: Collect language statistics
+        env:
+          LANGUAGE_STATS_TOKEN: ${{ secrets.LANGUAGE_STATS_TOKEN }}
+        run: python scripts/fetch_languages.py --collaborations config/public_collaborations.txt --exclusions config/excluded_repositories.txt --output /tmp/language-data.json
+
+      - name: Generate territory SVG
+        run: python scripts/generate_territory.py --input /tmp/language-data.json --output assets/charts/territory.svg
+
+      - name: Commit and push changed territory
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet -- assets/charts/territory.svg; then
+            echo "Territory unchanged."
+            exit 0
+          fi
+          git add assets/charts/territory.svg
+          git diff --cached --quiet && exit 0
+          git commit -m "Update language territory"
+          git push

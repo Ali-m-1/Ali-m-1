@@ -1,0 +1,5 @@
+# Add public teammate repositories as owner/repository, one per line.
+# Example:
+# teammate-user/teammate-project
+TStephB/Green-Cloud
+thmaneGit47/pediatric-bmt-predictor

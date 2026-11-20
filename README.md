@@ -51,6 +51,10 @@ Through academic and personal projects, I enjoy exploring these fields, developi
   <a href="https://docs.docker.com/" title="Docker"><img src="./assets/skills/docker.svg" alt="Docker" title="Docker" width="40" height="40"></a>
 </p>
 
+<p align="center">
+  <img src="./assets/charts/territory.svg" alt="Programming language distribution territory chart" width="100%">
+</p>
+
 ### <span style="color:#38BDF8">|</span> Featured Projects
 
 <table>
