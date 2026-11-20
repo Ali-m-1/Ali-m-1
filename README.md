@@ -38,7 +38,12 @@ Through academic and personal projects, I enjoy exploring these fields, developi
       <img src="./assets/skills/excel.svg" alt="Microsoft Excel" title="Excel" width="40" height="40">
     </picture>
   </a>&nbsp;&nbsp;
-  <a href="https://pyomo.readthedocs.io/en/latest/" title="Pyomo"><img src="./assets/skills/pyomo.png" alt="Pyomo" title="Pyomo" width="40" height="40"></a>&nbsp;&nbsp;
+  <a href="https://pyomo.readthedocs.io/en/latest/" title="Pyomo">
+    <picture>
+      <source media="(prefers-color-scheme: dark)" srcset="./assets/skills/pyomo-dark.png">
+      <img src="./assets/skills/pyomo.png" alt="Pyomo" title="Pyomo" width="40" height="40">
+    </picture>
+  </a>&nbsp;&nbsp;
   <a href="https://www.mathworks.com/help/matlab/" title="MATLAB"><img src="./assets/skills/matlab.svg" alt="MATLAB" title="MATLAB" width="40" height="40"></a>&nbsp;&nbsp;
   <a href="https://docs.djangoproject.com/" title="Django">
     <picture>
