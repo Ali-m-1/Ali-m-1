@@ -285,9 +285,10 @@ def generate_svg(entries: list[tuple[str, float]], username: str = "") -> str:
         '<circle cx="9" cy="8" r="0.30" fill="#101720" opacity="0.10"/>',
         '</pattern>',
         '<pattern id="contour-lines" width="96" height="72" patternUnits="userSpaceUse">',
-        '<path d="M-12 18 C12 5 28 27 48 16 S84 6 108 20" fill="none" stroke="#F1F5F9" stroke-opacity="0.11" stroke-width="0.65"/>',
-        '<path d="M-14 36 C10 23 31 43 52 34 S88 24 110 38" fill="none" stroke="#101720" stroke-opacity="0.10" stroke-width="0.65"/>',
-        '<path d="M-10 54 C14 41 34 62 55 51 S89 43 108 56" fill="none" stroke="#F1F5F9" stroke-opacity="0.09" stroke-width="0.65"/>',
+        '<path d="M-18 17 C8 2 23 29 48 16 S82 3 112 18" fill="none" stroke="#F1F5F9" stroke-opacity="0.22" stroke-width="1.05"/>',
+        '<path d="M-16 31 C10 16 31 47 54 32 S86 19 112 34" fill="none" stroke="#101720" stroke-opacity="0.16" stroke-width="0.95"/>',
+        '<path d="M-18 49 C7 34 29 59 51 47 S87 34 112 50" fill="none" stroke="#F1F5F9" stroke-opacity="0.20" stroke-width="1.05"/>',
+        '<path d="M-14 64 C11 50 36 69 58 58 S91 48 110 63" fill="none" stroke="#101720" stroke-opacity="0.14" stroke-width="0.90"/>',
         '</pattern>',
         '<filter id="label-shadow" x="-15%" y="-15%" width="130%" height="130%">',
         '<feDropShadow dx="0" dy="1" stdDeviation="0.55" flood-color="#101720" flood-opacity="0.72"/>',
@@ -299,15 +300,17 @@ def generate_svg(entries: list[tuple[str, float]], username: str = "") -> str:
             base = other_language_color(name)
         gradient_definitions.append(
             f'<linearGradient id="language-gradient-{index}" x1="0" y1="0" x2="1" y2="1">'
-            f'<stop offset="0" stop-color="{adjust_color(base, 22)}"/>'
-            f'<stop offset="0.58" stop-color="{base}"/>'
-            f'<stop offset="1" stop-color="{adjust_color(base, -18)}"/>'
+            f'<stop offset="0" stop-color="{adjust_color(base, 38)}"/>'
+            f'<stop offset="0.32" stop-color="{adjust_color(base, 24)}"/>'
+            f'<stop offset="0.68" stop-color="{base}"/>'
+            f'<stop offset="1" stop-color="{adjust_color(base, -34)}"/>'
             f'</linearGradient>'
         )
         gradient_definitions.append(
             f'<radialGradient id="language-highlight-{index}" cx="18%" cy="12%" r="82%">'
-            f'<stop offset="0" stop-color="#FFFFFF" stop-opacity="0.16"/>'
-            f'<stop offset="0.42" stop-color="#FFFFFF" stop-opacity="0.06"/>'
+            f'<stop offset="0" stop-color="#FFFFFF" stop-opacity="0.28"/>'
+            f'<stop offset="0.22" stop-color="#FFFFFF" stop-opacity="0.16"/>'
+            f'<stop offset="0.56" stop-color="#FFFFFF" stop-opacity="0.04"/>'
             f'<stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>'
             f'</radialGradient>'
         )
