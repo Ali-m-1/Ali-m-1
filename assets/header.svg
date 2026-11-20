@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="400" viewBox="0 0 1200 400" role="img" aria-labelledby="header-title header-desc">
-  <title id="header-title">Hi, I'm [YOUR NAME]</title>
+  <title id="header-title">Hi, I'm Mohamed Ali Rabbah</title>
   <desc id="header-desc">Engineering Student at École Centrale Casablanca. Interests include data analytics and business intelligence, machine learning and AI, operations research and optimization, and engineering real-world solutions.</desc>
 
   <defs>
@@ -47,7 +47,7 @@
   </g>
   <rect x="90" y="68" width="54" height="4" rx="2" fill="url(#accent)" filter="url(#shadow)"/>
 
-  <text class="heading" x="88" y="132" fill="#F1F5F9" font-size="62">Hi, I'm <tspan fill="#38BDF8">[YOUR NAME]</tspan></text>
+  <text class="heading" x="88" y="132" fill="#F1F5F9" font-size="62">Hi, I'm <tspan fill="#38BDF8">Mohamed Ali Rabbah</tspan></text>
   <text class="subtitle" x="90" y="184" fill="#CBD5E1" font-size="28">Engineering Student at École Centrale Casablanca</text>
 
   <rect x="88" y="222" width="3" height="62" rx="1.5" fill="#38BDF8" opacity="0.9"/>
