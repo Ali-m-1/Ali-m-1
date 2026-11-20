@@ -13,41 +13,41 @@ from typing import Iterable
 
 WIDTH = 1200
 HEIGHT = 420
-MAP = (72.0, 96.0, 772.0, 360.0)
-LEGEND_X = 836.0
+MAP = (52.0, 112.0, 752.0, 348.0)
+LEGEND_X = 804.0
 LEGEND_RIGHT = 1128.0
 
 LANGUAGE_COLORS = {
-    "Python": "#3572A5",
-    "JavaScript": "#F1E05A",
-    "TypeScript": "#3178C6",
-    "HTML": "#E34C26",
-    "CSS": "#563D7C",
-    "Shell": "#89E051",
-    "Java": "#B07219",
-    "C": "#555555",
-    "C++": "#F34B7D",
-    "C#": "#178600",
-    "Go": "#00ADD8",
-    "Rust": "#DEA584",
-    "Ruby": "#701516",
-    "PHP": "#4F5D95",
-    "Swift": "#F05138",
-    "Kotlin": "#A97BFF",
-    "R": "#198CE7",
-    "MATLAB": "#E16737",
-    "Jupyter Notebook": "#DA5B0B",
-    "Dart": "#00B4AB",
-    "Lua": "#000080",
-    "Scala": "#C22D40",
-    "Dockerfile": "#384D54",
-    "Vue": "#41B883",
-    "Nix": "#7E7EFF",
-    "TeX": "#3D6117",
-    "Solidity": "#AA6746",
-    "Perl": "#0298C3",
-    "Haskell": "#5E5086",
-    "Django": "#092E20",
+    "Python": "#4F78A8",
+    "JavaScript": "#C9B84A",
+    "TypeScript": "#557FA8",
+    "HTML": "#B66A55",
+    "CSS": "#685E8A",
+    "Shell": "#78A85A",
+    "Java": "#A37A45",
+    "C": "#646A73",
+    "C++": "#B85F7D",
+    "C#": "#568B54",
+    "Go": "#4B98A8",
+    "Rust": "#B98F78",
+    "Ruby": "#934D50",
+    "PHP": "#66709A",
+    "Swift": "#B86D58",
+    "Kotlin": "#8B76A8",
+    "R": "#557C9E",
+    "MATLAB": "#A86F58",
+    "Jupyter Notebook": "#B66F45",
+    "Dart": "#4F9A96",
+    "Lua": "#59658A",
+    "Scala": "#9B5A62",
+    "Dockerfile": "#557A86",
+    "Vue": "#579B7B",
+    "Nix": "#6F78A8",
+    "TeX": "#687A55",
+    "Solidity": "#966F59",
+    "Perl": "#4F8291",
+    "Haskell": "#74678A",
+    "Django": "#4D7C68",
 }
 
 
@@ -242,84 +242,114 @@ def text_contrast(color: str) -> str:
 
 def generate_svg(entries: list[tuple[str, float]], username: str = "") -> str:
     targets = [percentage / 100.0 for _, percentage in entries]
-    polygons, sites, _ = power_cells(len(entries), targets)
+    polygons, _, _ = power_cells(len(entries), targets)
+    map_area = (MAP[2] - MAP[0]) * (MAP[3] - MAP[1])
     lines = [
         '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 420" width="1200" height="420" '
-        'role="img" aria-label="Programming language distribution as a weighted territory chart">',
-        '<title>Programming Language Territory</title>',
-        '<desc>Programming language byte percentages represented by a weighted power diagram and ranked legend.</desc>',
-        '<rect width="1200" height="420" fill="#101720"/>',
-        '<text x="72" y="60" font-family="system-ui, -apple-system, \'Segoe UI\', sans-serif" '
-        'font-size="25" font-weight="700" fill="#F1F5F9">Territory</text>',
-        '<text x="72" y="82" font-family="ui-monospace, Menlo, Consolas, monospace" '
-        'font-size="10" fill="#CBD5E1" letter-spacing="4">PROGRAMMING LANGUAGES · AREA = SHARE</text>',
+        'role="img" aria-labelledby="chart-title chart-desc">',
+        '<title id="chart-title">Language Landscape</title>',
+        '<desc id="chart-desc">Programming language distribution across GitHub repositories, shown as a weighted territory diagram with a ranked legend.</desc>',
+        '<rect x="1" y="1" width="1198" height="418" rx="20" fill="#101720" stroke="#294052" stroke-width="1"/>',
+        '<text x="52" y="58" font-family="Inter, Segoe UI, Arial, sans-serif" '
+        'font-size="26" font-weight="700" letter-spacing="-0.4" fill="#F1F5F9">Language Landscape</text>',
+        '<text x="52" y="82" font-family="Inter, Segoe UI, Arial, sans-serif" '
+        'font-size="14" font-weight="400" fill="#CBD5E1">Distribution across my GitHub repositories</text>',
+        '<line x1="52" y1="96" x2="1148" y2="96" stroke="#294052" stroke-width="1"/>',
     ]
 
-    lines.append("<g>")
-    for index, ((name, percentage), polygon) in enumerate(zip(entries, polygons)):
+    lines.append('<defs><clipPath id="map-clip"><rect x="52" y="112" width="700" height="236" rx="12"/></clipPath></defs>')
+    lines.append('<rect x="52" y="112" width="700" height="236" rx="12" fill="#111B25" stroke="#294052" stroke-width="1"/>')
+    lines.append('<g clip-path="url(#map-clip)">')
+    for (name, percentage), polygon in zip(entries, polygons):
         color = LANGUAGE_COLORS.get(name, "#64748B")
         if name == "Other":
             color = "#64748B"
         ink = text_contrast(color)
         path = format_polygon(polygon)
-        lines.append(
-            f'<path d="{path}" fill="{color}" fill-opacity="0.88" '
-            'stroke="#101720" stroke-width="2"/>'
-        )
+        if path:
+            lines.append(
+                f'<path d="{path}" fill="{color}" fill-opacity="0.88" '
+                'stroke="#101720" stroke-width="1.5"/>'
+            )
         if len(polygon) >= 3:
             area = polygon_area(polygon)
-            cx = sum(point[0] for point in polygon) / len(polygon)
-            cy = sum(point[1] for point in polygon) / len(polygon)
-            if area / ((772.0 - 72.0) * (360.0 - 96.0)) >= 0.055:
+            signed_double_area = sum(
+                polygon[index][0] * polygon[(index + 1) % len(polygon)][1]
+                - polygon[(index + 1) % len(polygon)][0] * polygon[index][1]
+                for index in range(len(polygon))
+            )
+            if abs(signed_double_area) > 1e-9:
+                cx = sum(
+                    (polygon[index][0] + polygon[(index + 1) % len(polygon)][0])
+                    * (polygon[index][0] * polygon[(index + 1) % len(polygon)][1]
+                       - polygon[(index + 1) % len(polygon)][0] * polygon[index][1])
+                    for index in range(len(polygon))
+                ) / (3.0 * signed_double_area)
+                cy = sum(
+                    (polygon[index][1] + polygon[(index + 1) % len(polygon)][1])
+                    * (polygon[index][0] * polygon[(index + 1) % len(polygon)][1]
+                       - polygon[(index + 1) % len(polygon)][0] * polygon[index][1])
+                    for index in range(len(polygon))
+                ) / (3.0 * signed_double_area)
+            else:
+                cx = sum(point[0] for point in polygon) / len(polygon)
+                cy = sum(point[1] for point in polygon) / len(polygon)
+            if area / map_area >= 0.055:
                 lines.append(
                     f'<text x="{cx:.1f}" y="{cy - 2:.1f}" text-anchor="middle" '
-                    'font-family="ui-monospace, Menlo, Consolas, monospace" '
-                    f'font-size="12" font-weight="700" fill="{ink}">'
+                    'font-family="JetBrains Mono, Consolas, monospace" '
+                    f'font-size="12" font-weight="700" fill="{ink}" paint-order="stroke">'
                     f'{saxutils.escape(name)}</text>'
                 )
                 lines.append(
                     f'<text x="{cx:.1f}" y="{cy + 16:.1f}" text-anchor="middle" '
-                    'font-family="ui-monospace, Menlo, Consolas, monospace" '
-                    f'font-size="11" fill="{ink}" opacity="0.78">{percentage:.1f}%</text>'
+                    'font-family="JetBrains Mono, Consolas, monospace" '
+                    f'font-size="11" fill="{ink}" opacity="0.82" paint-order="stroke">{percentage:.1f}%</text>'
                 )
     lines.append("</g>")
 
-    lines.append('<text x="836" y="80" font-family="ui-monospace, Menlo, Consolas, monospace" '
-                 'font-size="10" fill="#CBD5E1" letter-spacing="4">BY AREA</text>')
-    lines.append('<line x1="836" y1="92" x2="1128" y2="92" stroke="#38BDF8" stroke-opacity="0.25"/>')
+    lines.append('<text x="804" y="126" font-family="JetBrains Mono, Consolas, monospace" '
+                 'font-size="10" fill="#94A3B8" letter-spacing="1.8">LANGUAGE</text>')
+    lines.append('<text x="1128" y="126" text-anchor="end" font-family="JetBrains Mono, Consolas, monospace" '
+                 'font-size="10" fill="#94A3B8" letter-spacing="1.2">SHARE</text>')
+    lines.append('<line x1="804" y1="138" x2="1148" y2="138" stroke="#294052" stroke-width="1"/>')
     for index, (name, percentage) in enumerate(entries):
-        y = 126 + index * 28
+        y = 164 + index * 25
         color = LANGUAGE_COLORS.get(name, "#64748B")
         if name == "Other":
             color = "#64748B"
-        lines.append(f'<rect x="836" y="{y - 10}" width="12" height="12" rx="2" fill="{color}"/>')
+        lines.append(f'<rect x="804" y="{y - 10}" width="10" height="10" rx="2" fill="{color}" fill-opacity="0.88"/>')
         lines.append(
-            f'<text x="860" y="{y}" font-family="ui-monospace, Menlo, Consolas, monospace" '
-            f'font-size="12" fill="#CBD5E1">{saxutils.escape(name)}</text>'
+            f'<text x="826" y="{y}" font-family="Inter, Segoe UI, Arial, sans-serif" '
+            f'font-size="12" font-weight="600" fill="#CBD5E1">{saxutils.escape(name)}</text>'
         )
         lines.append(
-            f'<text x="1128" y="{y}" text-anchor="end" '
-            'font-family="ui-monospace, Menlo, Consolas, monospace" '
-            f'font-size="12" fill="#94A3B8">{percentage:.1f}%</text>'
+            f'<text x="1148" y="{y}" text-anchor="end" '
+            'font-family="JetBrains Mono, Consolas, monospace" '
+            f'font-size="12" fill="#CBD5E1">{percentage:.1f}%</text>'
         )
-    lines.append('<line x1="72" y1="384" x2="1128" y2="384" stroke="#38BDF8" stroke-opacity="0.18"/>')
-    lines.append('<text x="72" y="404" font-family="ui-monospace, Menlo, Consolas, monospace" '
-                 'font-size="9.5" fill="#94A3B8" letter-spacing="2.5">'
-                 'WEIGHTED POWER DIAGRAM · WEIGHTS SOLVED SO AREA MATCHES SHARE</text>')
+    lines.append('<line x1="52" y1="372" x2="1148" y2="372" stroke="#294052" stroke-width="1"/>')
+    lines.append('<text x="52" y="398" font-family="JetBrains Mono, Consolas, monospace" '
+                 'font-size="10" fill="#94A3B8">Based on code volume · Updated weekly</text>')
+    lines.append('<circle cx="1138" cy="394" r="3" fill="#38BDF8"/>')
     lines.append('</svg>')
     return "\n".join(lines) + "\n"
 
 
 def generate_unavailable_svg() -> str:
     return """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 420" width="1200" height="420" role="img" aria-label="Programming language distribution unavailable">
-<title>Programming Language Territory</title>
+<title>Language Landscape</title>
 <desc>Language distribution data is unavailable. The automated workflow will replace this status graphic after a successful collection.</desc>
-<rect width="1200" height="420" fill="#101720"/>
-<text x="72" y="60" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="25" font-weight="700" fill="#F1F5F9">Territory</text>
-<text x="72" y="82" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="10" fill="#CBD5E1" letter-spacing="4">LANGUAGE DISTRIBUTION</text>
-<rect x="72" y="120" width="1056" height="180" rx="18" fill="#111D29" stroke="#38BDF8" stroke-opacity="0.18"/>
-<text x="600" y="205" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="16" fill="#CBD5E1">Data unavailable</text>
-<text x="600" y="230" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="11" fill="#94A3B8">Run the workflow successfully to generate this chart.</text>
+<rect x="1" y="1" width="1198" height="418" rx="20" fill="#101720" stroke="#294052" stroke-width="1"/>
+<text x="52" y="58" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="26" font-weight="700" letter-spacing="-0.4" fill="#F1F5F9">Language Landscape</text>
+<text x="52" y="82" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="14" fill="#CBD5E1">Distribution across my GitHub repositories</text>
+<line x1="52" y1="96" x2="1148" y2="96" stroke="#294052" stroke-width="1"/>
+<rect x="52" y="112" width="1096" height="236" rx="12" fill="#111B25" stroke="#294052" stroke-width="1"/>
+<text x="600" y="220" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace" font-size="16" fill="#CBD5E1">Data unavailable</text>
+<text x="600" y="244" text-anchor="middle" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="12" fill="#94A3B8">Run the workflow successfully to generate this chart.</text>
+<line x1="52" y1="372" x2="1148" y2="372" stroke="#294052" stroke-width="1"/>
+<text x="52" y="398" font-family="JetBrains Mono, Consolas, monospace" font-size="10" fill="#94A3B8">Based on code volume · Updated weekly</text>
+<circle cx="1138" cy="394" r="3" fill="#38BDF8"/>
 </svg>
 """
 

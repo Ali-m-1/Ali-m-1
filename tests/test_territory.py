@@ -14,6 +14,7 @@ from scripts.generate_territory import (
     normalize_percentages,
     polygon_area,
     power_cells,
+    MAP,
 )
 
 
@@ -145,14 +146,14 @@ class GeometryTests(unittest.TestCase):
     def test_weighted_power_diagram_area_accuracy(self):
         percentages = [31.0, 19.0, 13.0, 10.0, 8.0, 7.0, 5.0, 4.0, 3.0]
         polygons, _, _ = power_cells(9, [value / 100 for value in percentages])
-        total = 700.0 * 264.0
+        total = (MAP[2] - MAP[0]) * (MAP[3] - MAP[1])
         for polygon, target in zip(polygons, [value / 100 for value in percentages]):
             actual = polygon_area(polygon) / total
             self.assertLess(abs(actual - target), 0.01)
 
     def test_geometry_is_valid(self):
         polygons, _, _ = power_cells(4, [0.4, 0.3, 0.2, 0.1])
-        total = 700.0 * 264.0
+        total = (MAP[2] - MAP[0]) * (MAP[3] - MAP[1])
         covered = sum(polygon_area(polygon) for polygon in polygons)
         self.assertAlmostEqual(covered, total, delta=total * 0.01)
 
@@ -166,11 +167,15 @@ class SVGGenerationTests(unittest.TestCase):
             ("Other", 15.0),
         ])
         self.assertIn('viewBox="0 0 1200 420"', svg)
-        self.assertIn("<title>", svg)
-        self.assertIn("<desc>", svg)
-        self.assertIn('fill="#3572A5"', svg)
+        self.assertIn("<title id=", svg)
+        self.assertIn("<desc id=", svg)
+        self.assertIn("Language Landscape", svg)
+        self.assertIn("Distribution across my GitHub repositories", svg)
+        self.assertIn('fill="#4F78A8"', svg)
         self.assertIn("40.0%", svg)
         self.assertIn('fill="#101720"', svg)
+        self.assertIn("Based on code volume · Updated weekly", svg)
+        self.assertNotIn('<path d=""', svg)
 
     def test_unavailable_svg_is_safe_status_output(self):
         svg = generate_unavailable_svg()

@@ -1,45 +1,49 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 420" width="1200" height="420" role="img" aria-label="Programming language distribution as a weighted territory chart">
-<title>Programming Language Territory</title>
-<desc>Programming language byte percentages represented by a weighted power diagram and ranked legend.</desc>
-<rect width="1200" height="420" fill="#101720"/>
-<text x="72" y="60" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="25" font-weight="700" fill="#F1F5F9">Territory</text>
-<text x="72" y="82" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="10" fill="#CBD5E1" letter-spacing="4">PROGRAMMING LANGUAGES · AREA = SHARE</text>
-<g>
-<path d="M 72.0 319.0 L 72.0 96.0 L 407.5 96.0 L 393.3 283.2 Z" fill="#DA5B0B" fill-opacity="0.88" stroke="#101720" stroke-width="2"/>
-<text x="236.2" y="196.6" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="12" font-weight="700" fill="#F1F5F9">Jupyter Notebook</text>
-<text x="236.2" y="214.6" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="11" fill="#F1F5F9" opacity="0.78">36.2%</text>
-<path d="M 393.3 283.2 L 407.5 96.0 L 635.8 96.0 L 632.8 322.8 L 552.3 360.0 L 426.3 360.0 Z" fill="#3572A5" fill-opacity="0.88" stroke="#101720" stroke-width="2"/>
-<text x="508.0" y="251.0" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="12" font-weight="700" fill="#F1F5F9">Python</text>
-<text x="508.0" y="269.0" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="11" fill="#F1F5F9" opacity="0.78">32.2%</text>
-<path d="M 632.8 322.8 L 635.8 96.0 L 772.0 96.0 L 772.0 360.0 L 667.3 360.0 Z" fill="#E34C26" fill-opacity="0.88" stroke="#101720" stroke-width="2"/>
-<text x="696.0" y="245.0" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="12" font-weight="700" fill="#F1F5F9">HTML</text>
-<text x="696.0" y="263.0" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="11" fill="#F1F5F9" opacity="0.78">19.4%</text>
-<path d="M 72.0 319.0 L 393.3 283.2 L 426.3 360.0 L 72.0 360.0 Z" fill="#563D7C" fill-opacity="0.88" stroke="#101720" stroke-width="2"/>
-<text x="240.9" y="328.6" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="12" font-weight="700" fill="#F1F5F9">CSS</text>
-<text x="240.9" y="346.6" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="11" fill="#F1F5F9" opacity="0.78">10.9%</text>
-<path d="M 632.8 322.8 L 667.3 360.0 L 552.3 360.0 Z" fill="#F1E05A" fill-opacity="0.88" stroke="#101720" stroke-width="2"/>
-<path d="" fill="#384D54" fill-opacity="0.88" stroke="#101720" stroke-width="2"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 420" width="1200" height="420" role="img" aria-labelledby="chart-title chart-desc">
+<title id="chart-title">Language Landscape</title>
+<desc id="chart-desc">Programming language distribution across GitHub repositories, shown as a weighted territory diagram with a ranked legend.</desc>
+<rect x="1" y="1" width="1198" height="418" rx="20" fill="#101720" stroke="#294052" stroke-width="1"/>
+<text x="52" y="58" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="26" font-weight="700" letter-spacing="-0.4" fill="#F1F5F9">Language Landscape</text>
+<text x="52" y="82" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="14" font-weight="400" fill="#CBD5E1">Distribution across my GitHub repositories</text>
+<line x1="52" y1="96" x2="1148" y2="96" stroke="#294052" stroke-width="1"/>
+<defs><clipPath id="map-clip"><rect x="52" y="112" width="700" height="236" rx="12"/></clipPath></defs>
+<rect x="52" y="112" width="700" height="236" rx="12" fill="#111B25" stroke="#294052" stroke-width="1"/>
+<g clip-path="url(#map-clip)">
+<path d="M 52.0 112.0 L 373.3 112.0 L 367.5 219.4 L 137.7 348.0 L 52.0 348.0 Z" fill="#B66F45" fill-opacity="0.88" stroke="#101720" stroke-width="1.5"/>
+<text x="190.6" y="209.1" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace" font-size="12" font-weight="700" fill="#F1F5F9" paint-order="stroke">Jupyter Notebook</text>
+<text x="190.6" y="227.1" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace" font-size="11" fill="#F1F5F9" opacity="0.82" paint-order="stroke">36.2%</text>
+<path d="M 367.5 219.4 L 373.3 112.0 L 616.1 112.0 L 612.7 309.5 L 551.4 348.0 L 422.7 348.0 Z" fill="#4F78A8" fill-opacity="0.88" stroke="#101720" stroke-width="1.5"/>
+<text x="496.3" y="220.8" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace" font-size="12" font-weight="700" fill="#F1F5F9" paint-order="stroke">Python</text>
+<text x="496.3" y="238.8" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace" font-size="11" fill="#F1F5F9" opacity="0.82" paint-order="stroke">32.2%</text>
+<path d="M 612.7 309.5 L 616.1 112.0 L 752.0 112.0 L 752.0 348.0 L 647.6 348.0 Z" fill="#B66A55" fill-opacity="0.88" stroke="#101720" stroke-width="1.5"/>
+<text x="684.3" y="226.3" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace" font-size="12" font-weight="700" fill="#F1F5F9" paint-order="stroke">HTML</text>
+<text x="684.3" y="244.3" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace" font-size="11" fill="#F1F5F9" opacity="0.82" paint-order="stroke">19.4%</text>
+<path d="M 367.5 219.4 L 422.7 348.0 L 137.7 348.0 Z" fill="#685E8A" fill-opacity="0.88" stroke="#101720" stroke-width="1.5"/>
+<text x="309.3" y="303.1" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace" font-size="12" font-weight="700" fill="#F1F5F9" paint-order="stroke">CSS</text>
+<text x="309.3" y="321.1" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace" font-size="11" fill="#F1F5F9" opacity="0.82" paint-order="stroke">10.9%</text>
+<path d="M 612.7 309.5 L 647.6 348.0 L 551.4 348.0 Z" fill="#C9B84A" fill-opacity="0.88" stroke="#101720" stroke-width="1.5"/>
 </g>
-<text x="836" y="80" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="10" fill="#CBD5E1" letter-spacing="4">BY AREA</text>
-<line x1="836" y1="92" x2="1128" y2="92" stroke="#38BDF8" stroke-opacity="0.25"/>
-<rect x="836" y="116" width="12" height="12" rx="2" fill="#DA5B0B"/>
-<text x="860" y="126" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="12" fill="#CBD5E1">Jupyter Notebook</text>
-<text x="1128" y="126" text-anchor="end" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="12" fill="#94A3B8">36.2%</text>
-<rect x="836" y="144" width="12" height="12" rx="2" fill="#3572A5"/>
-<text x="860" y="154" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="12" fill="#CBD5E1">Python</text>
-<text x="1128" y="154" text-anchor="end" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="12" fill="#94A3B8">32.2%</text>
-<rect x="836" y="172" width="12" height="12" rx="2" fill="#E34C26"/>
-<text x="860" y="182" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="12" fill="#CBD5E1">HTML</text>
-<text x="1128" y="182" text-anchor="end" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="12" fill="#94A3B8">19.4%</text>
-<rect x="836" y="200" width="12" height="12" rx="2" fill="#563D7C"/>
-<text x="860" y="210" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="12" fill="#CBD5E1">CSS</text>
-<text x="1128" y="210" text-anchor="end" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="12" fill="#94A3B8">10.9%</text>
-<rect x="836" y="228" width="12" height="12" rx="2" fill="#F1E05A"/>
-<text x="860" y="238" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="12" fill="#CBD5E1">JavaScript</text>
-<text x="1128" y="238" text-anchor="end" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="12" fill="#94A3B8">1.2%</text>
-<rect x="836" y="256" width="12" height="12" rx="2" fill="#384D54"/>
-<text x="860" y="266" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="12" fill="#CBD5E1">Dockerfile</text>
-<text x="1128" y="266" text-anchor="end" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="12" fill="#94A3B8">0.1%</text>
-<line x1="72" y1="384" x2="1128" y2="384" stroke="#38BDF8" stroke-opacity="0.18"/>
-<text x="72" y="404" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="9.5" fill="#94A3B8" letter-spacing="2.5">WEIGHTED POWER DIAGRAM · WEIGHTS SOLVED SO AREA MATCHES SHARE</text>
+<text x="804" y="126" font-family="JetBrains Mono, Consolas, monospace" font-size="10" fill="#94A3B8" letter-spacing="1.8">LANGUAGE</text>
+<text x="1128" y="126" text-anchor="end" font-family="JetBrains Mono, Consolas, monospace" font-size="10" fill="#94A3B8" letter-spacing="1.2">SHARE</text>
+<line x1="804" y1="138" x2="1148" y2="138" stroke="#294052" stroke-width="1"/>
+<rect x="804" y="154" width="10" height="10" rx="2" fill="#B66F45" fill-opacity="0.88"/>
+<text x="826" y="164" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="12" font-weight="600" fill="#CBD5E1">Jupyter Notebook</text>
+<text x="1148" y="164" text-anchor="end" font-family="JetBrains Mono, Consolas, monospace" font-size="12" fill="#CBD5E1">36.2%</text>
+<rect x="804" y="179" width="10" height="10" rx="2" fill="#4F78A8" fill-opacity="0.88"/>
+<text x="826" y="189" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="12" font-weight="600" fill="#CBD5E1">Python</text>
+<text x="1148" y="189" text-anchor="end" font-family="JetBrains Mono, Consolas, monospace" font-size="12" fill="#CBD5E1">32.2%</text>
+<rect x="804" y="204" width="10" height="10" rx="2" fill="#B66A55" fill-opacity="0.88"/>
+<text x="826" y="214" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="12" font-weight="600" fill="#CBD5E1">HTML</text>
+<text x="1148" y="214" text-anchor="end" font-family="JetBrains Mono, Consolas, monospace" font-size="12" fill="#CBD5E1">19.4%</text>
+<rect x="804" y="229" width="10" height="10" rx="2" fill="#685E8A" fill-opacity="0.88"/>
+<text x="826" y="239" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="12" font-weight="600" fill="#CBD5E1">CSS</text>
+<text x="1148" y="239" text-anchor="end" font-family="JetBrains Mono, Consolas, monospace" font-size="12" fill="#CBD5E1">10.9%</text>
+<rect x="804" y="254" width="10" height="10" rx="2" fill="#C9B84A" fill-opacity="0.88"/>
+<text x="826" y="264" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="12" font-weight="600" fill="#CBD5E1">JavaScript</text>
+<text x="1148" y="264" text-anchor="end" font-family="JetBrains Mono, Consolas, monospace" font-size="12" fill="#CBD5E1">1.2%</text>
+<rect x="804" y="279" width="10" height="10" rx="2" fill="#557A86" fill-opacity="0.88"/>
+<text x="826" y="289" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="12" font-weight="600" fill="#CBD5E1">Dockerfile</text>
+<text x="1148" y="289" text-anchor="end" font-family="JetBrains Mono, Consolas, monospace" font-size="12" fill="#CBD5E1">0.1%</text>
+<line x1="52" y1="372" x2="1148" y2="372" stroke="#294052" stroke-width="1"/>
+<text x="52" y="398" font-family="JetBrains Mono, Consolas, monospace" font-size="10" fill="#94A3B8">Based on code volume · Updated weekly</text>
+<circle cx="1138" cy="394" r="3" fill="#38BDF8"/>
 </svg>
