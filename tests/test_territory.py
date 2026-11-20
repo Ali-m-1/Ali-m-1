@@ -174,12 +174,18 @@ class SVGGenerationTests(unittest.TestCase):
         self.assertIn("Languages across my GitHub repositories", svg)
         self.assertIn('preserveAspectRatio="xMidYMid meet"', svg)
         self.assertIn('fill="url(#language-gradient-0)"', svg)
+        self.assertIn('fill="url(#language-highlight-0)"', svg)
+        self.assertIn('fill="url(#surface-grain)"', svg)
+        self.assertIn('fill="url(#contour-lines)"', svg)
+        self.assertIn('font-weight="800"', svg)
+        self.assertIn('filter="url(#label-shadow)"', svg)
         self.assertEqual(LANGUAGE_COLORS["Python"], "#397DA6")
         self.assertEqual(LANGUAGE_COLORS["Jupyter Notebook"], "#B86B40")
         self.assertEqual(LANGUAGE_COLORS["HTML"], "#B8534B")
         self.assertIn("40.0%", svg)
         self.assertIn('fill="#101720"', svg)
         self.assertNotIn('<path d=""', svg)
+        self.assertNotIn("{percentage:", svg)
         self.assertNotIn("Based on code volume", svg)
 
     def test_unavailable_svg_is_safe_status_output(self):

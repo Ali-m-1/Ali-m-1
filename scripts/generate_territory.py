@@ -277,16 +277,39 @@ def generate_svg(entries: list[tuple[str, float]], username: str = "") -> str:
         'font-size="15" font-weight="400" fill="#CBD5E1">Languages across my GitHub repositories</text>',
     ]
 
-    gradient_definitions = ['<defs>', '<clipPath id="map-clip"><rect x="52" y="112" width="788" height="236" rx="10"/></clipPath>']
+    gradient_definitions = [
+        '<defs>',
+        '<clipPath id="map-clip"><rect x="52" y="112" width="788" height="236" rx="10"/></clipPath>',
+        '<pattern id="surface-grain" width="12" height="12" patternUnits="userSpaceUse">',
+        '<circle cx="2" cy="3" r="0.35" fill="#F1F5F9" opacity="0.10"/>',
+        '<circle cx="9" cy="8" r="0.30" fill="#101720" opacity="0.10"/>',
+        '</pattern>',
+        '<pattern id="contour-lines" width="96" height="72" patternUnits="userSpaceUse">',
+        '<path d="M-12 18 C12 5 28 27 48 16 S84 6 108 20" fill="none" stroke="#F1F5F9" stroke-opacity="0.11" stroke-width="0.65"/>',
+        '<path d="M-14 36 C10 23 31 43 52 34 S88 24 110 38" fill="none" stroke="#101720" stroke-opacity="0.10" stroke-width="0.65"/>',
+        '<path d="M-10 54 C14 41 34 62 55 51 S89 43 108 56" fill="none" stroke="#F1F5F9" stroke-opacity="0.09" stroke-width="0.65"/>',
+        '</pattern>',
+        '<filter id="label-shadow" x="-15%" y="-15%" width="130%" height="130%">',
+        '<feDropShadow dx="0" dy="1" stdDeviation="0.55" flood-color="#101720" flood-opacity="0.72"/>',
+        '</filter>',
+    ]
     for index, (name, _) in enumerate(entries):
         base = LANGUAGE_COLORS.get(name) if name != "Other" else other_language_color(name)
         if not base:
             base = other_language_color(name)
         gradient_definitions.append(
             f'<linearGradient id="language-gradient-{index}" x1="0" y1="0" x2="1" y2="1">'
-            f'<stop offset="0" stop-color="{adjust_color(base, 18)}"/>'
-            f'<stop offset="1" stop-color="{adjust_color(base, -14)}"/>'
+            f'<stop offset="0" stop-color="{adjust_color(base, 22)}"/>'
+            f'<stop offset="0.58" stop-color="{base}"/>'
+            f'<stop offset="1" stop-color="{adjust_color(base, -18)}"/>'
             f'</linearGradient>'
+        )
+        gradient_definitions.append(
+            f'<radialGradient id="language-highlight-{index}" cx="18%" cy="12%" r="82%">'
+            f'<stop offset="0" stop-color="#FFFFFF" stop-opacity="0.16"/>'
+            f'<stop offset="0.42" stop-color="#FFFFFF" stop-opacity="0.06"/>'
+            f'<stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>'
+            f'</radialGradient>'
         )
     gradient_definitions.append('</defs>')
     lines.append("".join(gradient_definitions))
@@ -301,7 +324,16 @@ def generate_svg(entries: list[tuple[str, float]], username: str = "") -> str:
         if path:
             lines.append(
                 f'<path d="{path}" fill="url(#language-gradient-{index})" '
-                'stroke="#101720" stroke-width="1.35"/>'
+                'stroke="#101720" stroke-width="1.0" stroke-linejoin="round"/>'
+            )
+            lines.append(
+                f'<path d="{path}" fill="url(#language-highlight-{index})" '
+                'stroke="#E2E8F0" stroke-opacity="0.08" stroke-width="0.45" '
+                'stroke-linejoin="round"/>'
+            )
+            lines.append(
+                f'<path d="{path}" fill="url(#contour-lines)" '
+                'opacity="0.62" stroke="none"/>'
             )
         if len(polygon) >= 3:
             area = polygon_area(polygon)
@@ -329,15 +361,19 @@ def generate_svg(entries: list[tuple[str, float]], username: str = "") -> str:
             if area / map_area >= 0.055:
                 lines.append(
                     f'<text x="{cx:.1f}" y="{cy - 2:.1f}" text-anchor="middle" '
-                    'font-family="JetBrains Mono, Consolas, monospace" '
-                    f'font-size="13" font-weight="700" fill="{ink}" paint-order="stroke">'
+                    'font-family="Inter, Segoe UI, Arial, sans-serif" '
+                    f'font-size="13" font-weight="800" fill="{ink}" '
+                    'stroke="#101720" stroke-opacity="0.20" stroke-width="0.35" '
+                    'paint-order="stroke" filter="url(#label-shadow)">'
                     f'{saxutils.escape(name)}</text>'
                 )
                 lines.append(
                     f'<text x="{cx:.1f}" y="{cy + 16:.1f}" text-anchor="middle" '
                     'font-family="JetBrains Mono, Consolas, monospace" '
-                    f'font-size="12" fill="{ink}" opacity="0.86" paint-order="stroke">{percentage:.1f}%</text>'
+                    f'font-size="12" font-weight="500" fill="{ink}" opacity="0.82" '
+                    f'paint-order="stroke" filter="url(#label-shadow)">{percentage:.1f}%</text>'
                 )
+    lines.append('<rect x="52" y="112" width="788" height="236" rx="10" fill="url(#surface-grain)" opacity="0.22" pointer-events="none"/>')
     lines.append("</g>")
 
     legend_start = 162 if len(entries) <= 6 else 154
