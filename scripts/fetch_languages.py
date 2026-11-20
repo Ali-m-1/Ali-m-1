@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import re
 import sys
 import time
 from collections import Counter
@@ -23,7 +24,22 @@ class CollectionError(RuntimeError):
     pass
 
 
-def github_request(session: requests.Session, url: str, params: dict | None = None) -> requests.Response:
+def sanitize_validation_text(text: str) -> str:
+    """Keep short GitHub validation text without URLs, credentials, or identifiers."""
+    sanitized = str(text)
+    sanitized = re.sub(r"https?://\S+", "[redacted]", sanitized)
+    sanitized = re.sub(r"\b(?:gh[pousr]_[A-Za-z0-9_]+|github_pat_[A-Za-z0-9_]+)\b", "[redacted]", sanitized)
+    sanitized = re.sub(r"(?i)\b(?:bearer|token)\s+[A-Za-z0-9._~-]+", "[redacted]", sanitized)
+    sanitized = re.sub(r"\b[A-Za-z0-9](?:[A-Za-z0-9-]{0,38}[A-Za-z0-9])?/[^ \n,:]+", "[redacted]", sanitized)
+    return " ".join(sanitized.split())[:240]
+
+
+def github_request(
+    session: requests.Session,
+    url: str,
+    params: dict | None = None,
+    operation: str = "GitHub API request",
+) -> requests.Response:
     for attempt in range(5):
         response = session.get(url, params=params, timeout=30)
         if response.status_code in (403, 429):
@@ -34,11 +50,33 @@ def github_request(session: requests.Session, url: str, params: dict | None = No
             except (TypeError, ValueError):
                 delay = 60
             if attempt == 4:
-                raise CollectionError("GitHub API rate limit or authorization failure.")
+                raise CollectionError(f"{operation} failed: GitHub API rate limit or authorization failure (HTTP {response.status_code}).")
             time.sleep(min(delay, 60))
             continue
         if response.status_code >= 400:
-            raise CollectionError(f"GitHub API returned HTTP {response.status_code}.")
+            details: list[str] = []
+            try:
+                payload = response.json()
+            except requests.JSONDecodeError:
+                payload = {}
+            if isinstance(payload, dict):
+                message = sanitize_validation_text(payload.get("message", ""))
+                if message:
+                    details.append(message)
+                for error in payload.get("errors", [])[:5]:
+                    if isinstance(error, dict):
+                        code = sanitize_validation_text(str(error.get("code", "")))
+                        field = sanitize_validation_text(str(error.get("field", "")))
+                        resource = sanitize_validation_text(str(error.get("resource", "")))
+                        parts = [part for part in (resource, field, code) if part]
+                        if parts:
+                            details.append(" / ".join(parts))
+                    elif isinstance(error, str):
+                        details.append(sanitize_validation_text(error))
+            detail_text = "; ".join(details)
+            if detail_text:
+                raise CollectionError(f"{operation} failed: GitHub API HTTP {response.status_code}: {detail_text}")
+            raise CollectionError(f"{operation} failed: GitHub API HTTP {response.status_code}.")
         return response
     raise CollectionError("GitHub API request failed.")
 
@@ -48,7 +86,7 @@ def paginate(session: requests.Session, url: str, params: dict) -> list[dict]:
     page = 1
     while True:
         page_params = {**params, "page": page, "per_page": 100}
-        response = github_request(session, url, page_params)
+        response = github_request(session, url, page_params, "Owned repository discovery")
         batch = response.json()
         if not isinstance(batch, list):
             raise CollectionError("Unexpected GitHub API response.")
@@ -79,7 +117,7 @@ def normalize_repo(repo: dict) -> tuple[str, str]:
 
 
 def get_user_and_owned_repositories(session: requests.Session) -> tuple[str, list[dict]]:
-    user_response = github_request(session, f"{API}/user")
+    user_response = github_request(session, f"{API}/user", operation="Authenticated username lookup")
     user = user_response.json()
     login = user.get("login")
     if not login:
@@ -88,13 +126,13 @@ def get_user_and_owned_repositories(session: requests.Session) -> tuple[str, lis
     repos = paginate(
         session,
         f"{API}/user/repos",
-        {"affiliation": "owner", "type": "owner", "sort": "full_name", "direction": "asc"},
+        {"affiliation": "owner"},
     )
     return str(login), repos
 
 
 def get_repository(session: requests.Session, owner_repo: str) -> dict:
-    response = github_request(session, f"{API}/repos/{owner_repo}")
+    response = github_request(session, f"{API}/repos/{owner_repo}", operation="Public collaboration validation")
     repo = response.json()
     if not isinstance(repo, dict):
         raise CollectionError("Unexpected repository metadata response.")
@@ -140,7 +178,11 @@ def aggregate_language_counts(
             continue
 
         seen.add(key)
-        response = github_request(session, f"{API}/repos/{owner}/{name}/languages")
+        response = github_request(
+            session,
+            f"{API}/repos/{owner}/{name}/languages",
+            operation="Repository language collection",
+        )
         languages = response.json()
         if not isinstance(languages, dict):
             raise CollectionError("Unexpected language statistics response.")

@@ -4,6 +4,7 @@ from unittest.mock import Mock, patch
 from scripts.fetch_languages import (
     aggregate_language_counts,
     get_user_and_owned_repositories,
+    github_request,
     paginate,
 )
 from scripts.generate_territory import (
@@ -17,6 +18,43 @@ from scripts.generate_territory import (
 
 
 class LanguageAggregationTests(unittest.TestCase):
+    @patch("scripts.fetch_languages.github_request")
+    def test_owned_repository_discovery_uses_affiliation_without_type(self, github_request):
+        owned_page = Mock()
+        owned_page.json.return_value = [{"owner": {"login": "owner"}, "name": "repo"}]
+        github_request.return_value = owned_page
+
+        repos = paginate(
+            Mock(),
+            "https://api.github.com/user/repos",
+            {"affiliation": "owner"},
+        )
+
+        self.assertEqual(repos[0]["name"], "repo")
+        _, url, params, operation = github_request.call_args.args
+        self.assertEqual(params["affiliation"], "owner")
+        self.assertNotIn("type", params)
+        self.assertEqual(operation, "Owned repository discovery")
+
+    def test_422_error_reports_operation_and_sanitized_validation(self):
+        response = Mock()
+        response.status_code = 422
+        response.headers = {}
+        response.json.return_value = {
+            "message": "Validation Failed",
+            "errors": [{"resource": "Repository", "field": "name", "code": "invalid"}],
+        }
+        session = Mock()
+        session.get.return_value = response
+
+        with self.assertRaisesRegex(Exception, "Owned repository discovery failed.*HTTP 422"):
+            github_request(
+                session,
+                "https://api.github.com/user/repos",
+                {"affiliation": "owner"},
+                "Owned repository discovery",
+            )
+
     @patch("scripts.fetch_languages.github_request")
     def test_authenticated_user_and_owned_repository_discovery(self, github_request):
         user_response = Mock()
