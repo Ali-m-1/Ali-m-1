@@ -11,6 +11,7 @@ from scripts.generate_territory import (
     choose_top_languages,
     generate_svg,
     generate_unavailable_svg,
+    LANGUAGE_COLORS,
     normalize_percentages,
     polygon_area,
     power_cells,
@@ -170,12 +171,16 @@ class SVGGenerationTests(unittest.TestCase):
         self.assertIn("<title id=", svg)
         self.assertIn("<desc id=", svg)
         self.assertIn("Language Landscape", svg)
-        self.assertIn("Distribution across my GitHub repositories", svg)
-        self.assertIn('fill="#4F78A8"', svg)
+        self.assertIn("Languages across my GitHub repositories", svg)
+        self.assertIn('preserveAspectRatio="xMidYMid meet"', svg)
+        self.assertIn('fill="url(#language-gradient-0)"', svg)
+        self.assertEqual(LANGUAGE_COLORS["Python"], "#397DA6")
+        self.assertEqual(LANGUAGE_COLORS["Jupyter Notebook"], "#B86B40")
+        self.assertEqual(LANGUAGE_COLORS["HTML"], "#B8534B")
         self.assertIn("40.0%", svg)
         self.assertIn('fill="#101720"', svg)
-        self.assertIn("Based on code volume · Updated weekly", svg)
         self.assertNotIn('<path d=""', svg)
+        self.assertNotIn("Based on code volume", svg)
 
     def test_unavailable_svg_is_safe_status_output(self):
         svg = generate_unavailable_svg()

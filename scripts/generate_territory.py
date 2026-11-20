@@ -13,16 +13,16 @@ from typing import Iterable
 
 WIDTH = 1200
 HEIGHT = 420
-MAP = (52.0, 112.0, 752.0, 348.0)
-LEGEND_X = 804.0
+MAP = (52.0, 112.0, 840.0, 348.0)
+LEGEND_X = 888.0
 LEGEND_RIGHT = 1128.0
 
 LANGUAGE_COLORS = {
-    "Python": "#4F78A8",
-    "JavaScript": "#C9B84A",
+    "Python": "#397DA6",
+    "JavaScript": "#C8A84E",
     "TypeScript": "#557FA8",
-    "HTML": "#B66A55",
-    "CSS": "#685E8A",
+    "HTML": "#B8534B",
+    "CSS": "#765C9A",
     "Shell": "#78A85A",
     "Java": "#A37A45",
     "C": "#646A73",
@@ -36,11 +36,11 @@ LANGUAGE_COLORS = {
     "Kotlin": "#8B76A8",
     "R": "#557C9E",
     "MATLAB": "#A86F58",
-    "Jupyter Notebook": "#B66F45",
+    "Jupyter Notebook": "#B86B40",
     "Dart": "#4F9A96",
     "Lua": "#59658A",
     "Scala": "#9B5A62",
-    "Dockerfile": "#557A86",
+    "Dockerfile": "#4C8992",
     "Vue": "#579B7B",
     "Nix": "#6F78A8",
     "TeX": "#687A55",
@@ -240,36 +240,68 @@ def text_contrast(color: str) -> str:
     return "#101720" if luminance > 0.62 else "#F1F5F9"
 
 
+def adjust_color(color: str, amount: int) -> str:
+    values = [
+        max(0, min(255, int(color[index:index + 2], 16) + amount))
+        for index in (1, 3, 5)
+    ]
+    return "#" + "".join(f"{value:02X}" for value in values)
+
+
+def other_language_color(name: str) -> str:
+    palette = (
+        "#6B8299",
+        "#6D8F82",
+        "#8A7A9C",
+        "#9A7B67",
+        "#657E8A",
+        "#807D64",
+    )
+    value = sum((index + 1) * ord(character) for index, character in enumerate(name))
+    return palette[value % len(palette)]
+
+
 def generate_svg(entries: list[tuple[str, float]], username: str = "") -> str:
     targets = [percentage / 100.0 for _, percentage in entries]
     polygons, _, _ = power_cells(len(entries), targets)
     map_area = (MAP[2] - MAP[0]) * (MAP[3] - MAP[1])
     lines = [
-        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 420" width="1200" height="420" '
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 420" width="1200" height="420" preserveAspectRatio="xMidYMid meet" '
         'role="img" aria-labelledby="chart-title chart-desc">',
         '<title id="chart-title">Language Landscape</title>',
         '<desc id="chart-desc">Programming language distribution across GitHub repositories, shown as a weighted territory diagram with a ranked legend.</desc>',
         '<rect x="1" y="1" width="1198" height="418" rx="20" fill="#101720" stroke="#294052" stroke-width="1"/>',
         '<text x="52" y="58" font-family="Inter, Segoe UI, Arial, sans-serif" '
-        'font-size="26" font-weight="700" letter-spacing="-0.4" fill="#F1F5F9">Language Landscape</text>',
+        'font-size="30" font-weight="700" letter-spacing="-0.6" fill="#F1F5F9">Language Landscape</text>',
         '<text x="52" y="82" font-family="Inter, Segoe UI, Arial, sans-serif" '
-        'font-size="14" font-weight="400" fill="#CBD5E1">Distribution across my GitHub repositories</text>',
-        '<line x1="52" y1="96" x2="1148" y2="96" stroke="#294052" stroke-width="1"/>',
+        'font-size="15" font-weight="400" fill="#CBD5E1">Languages across my GitHub repositories</text>',
     ]
 
-    lines.append('<defs><clipPath id="map-clip"><rect x="52" y="112" width="700" height="236" rx="12"/></clipPath></defs>')
-    lines.append('<rect x="52" y="112" width="700" height="236" rx="12" fill="#111B25" stroke="#294052" stroke-width="1"/>')
+    gradient_definitions = ['<defs>', '<clipPath id="map-clip"><rect x="52" y="112" width="788" height="236" rx="10"/></clipPath>']
+    for index, (name, _) in enumerate(entries):
+        base = LANGUAGE_COLORS.get(name) if name != "Other" else other_language_color(name)
+        if not base:
+            base = other_language_color(name)
+        gradient_definitions.append(
+            f'<linearGradient id="language-gradient-{index}" x1="0" y1="0" x2="1" y2="1">'
+            f'<stop offset="0" stop-color="{adjust_color(base, 18)}"/>'
+            f'<stop offset="1" stop-color="{adjust_color(base, -14)}"/>'
+            f'</linearGradient>'
+        )
+    gradient_definitions.append('</defs>')
+    lines.append("".join(gradient_definitions))
+    lines.append('<rect x="52" y="112" width="788" height="236" rx="10" fill="#111B25" stroke="#294052" stroke-width="1"/>')
     lines.append('<g clip-path="url(#map-clip)">')
-    for (name, percentage), polygon in zip(entries, polygons):
-        color = LANGUAGE_COLORS.get(name, "#64748B")
-        if name == "Other":
-            color = "#64748B"
+    for index, ((name, percentage), polygon) in enumerate(zip(entries, polygons)):
+        color = LANGUAGE_COLORS.get(name)
+        if name == "Other" or not color:
+            color = other_language_color(name)
         ink = text_contrast(color)
         path = format_polygon(polygon)
         if path:
             lines.append(
-                f'<path d="{path}" fill="{color}" fill-opacity="0.88" '
-                'stroke="#101720" stroke-width="1.5"/>'
+                f'<path d="{path}" fill="url(#language-gradient-{index})" '
+                'stroke="#101720" stroke-width="1.35"/>'
             )
         if len(polygon) >= 3:
             area = polygon_area(polygon)
@@ -298,58 +330,47 @@ def generate_svg(entries: list[tuple[str, float]], username: str = "") -> str:
                 lines.append(
                     f'<text x="{cx:.1f}" y="{cy - 2:.1f}" text-anchor="middle" '
                     'font-family="JetBrains Mono, Consolas, monospace" '
-                    f'font-size="12" font-weight="700" fill="{ink}" paint-order="stroke">'
+                    f'font-size="13" font-weight="700" fill="{ink}" paint-order="stroke">'
                     f'{saxutils.escape(name)}</text>'
                 )
                 lines.append(
                     f'<text x="{cx:.1f}" y="{cy + 16:.1f}" text-anchor="middle" '
                     'font-family="JetBrains Mono, Consolas, monospace" '
-                    f'font-size="11" fill="{ink}" opacity="0.82" paint-order="stroke">{percentage:.1f}%</text>'
+                    f'font-size="12" fill="{ink}" opacity="0.86" paint-order="stroke">{percentage:.1f}%</text>'
                 )
     lines.append("</g>")
 
-    lines.append('<text x="804" y="126" font-family="JetBrains Mono, Consolas, monospace" '
-                 'font-size="10" fill="#94A3B8" letter-spacing="1.8">LANGUAGE</text>')
-    lines.append('<text x="1128" y="126" text-anchor="end" font-family="JetBrains Mono, Consolas, monospace" '
-                 'font-size="10" fill="#94A3B8" letter-spacing="1.2">SHARE</text>')
-    lines.append('<line x1="804" y1="138" x2="1148" y2="138" stroke="#294052" stroke-width="1"/>')
+    legend_start = 162 if len(entries) <= 6 else 154
+    legend_step = 31 if len(entries) <= 6 else 27
     for index, (name, percentage) in enumerate(entries):
-        y = 164 + index * 25
-        color = LANGUAGE_COLORS.get(name, "#64748B")
-        if name == "Other":
-            color = "#64748B"
-        lines.append(f'<rect x="804" y="{y - 10}" width="10" height="10" rx="2" fill="{color}" fill-opacity="0.88"/>')
+        y = legend_start + index * legend_step
+        color = LANGUAGE_COLORS.get(name)
+        if name == "Other" or not color:
+            color = other_language_color(name)
+        lines.append(f'<rect x="{LEGEND_X}" y="{y - 10}" width="12" height="12" rx="3" fill="{color}"/>')
         lines.append(
-            f'<text x="826" y="{y}" font-family="Inter, Segoe UI, Arial, sans-serif" '
-            f'font-size="12" font-weight="600" fill="#CBD5E1">{saxutils.escape(name)}</text>'
+            f'<text x="{LEGEND_X + 24}" y="{y}" font-family="Inter, Segoe UI, Arial, sans-serif" '
+            f'font-size="13" font-weight="600" fill="#CBD5E1">{saxutils.escape(name)}</text>'
         )
         lines.append(
             f'<text x="1148" y="{y}" text-anchor="end" '
             'font-family="JetBrains Mono, Consolas, monospace" '
-            f'font-size="12" fill="#CBD5E1">{percentage:.1f}%</text>'
+            f'font-size="13" fill="#CBD5E1">{percentage:.1f}%</text>'
         )
-    lines.append('<line x1="52" y1="372" x2="1148" y2="372" stroke="#294052" stroke-width="1"/>')
-    lines.append('<text x="52" y="398" font-family="JetBrains Mono, Consolas, monospace" '
-                 'font-size="10" fill="#94A3B8">Based on code volume · Updated weekly</text>')
-    lines.append('<circle cx="1138" cy="394" r="3" fill="#38BDF8"/>')
     lines.append('</svg>')
     return "\n".join(lines) + "\n"
 
 
 def generate_unavailable_svg() -> str:
-    return """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 420" width="1200" height="420" role="img" aria-label="Programming language distribution unavailable">
+    return """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 420" width="1200" height="420" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Programming language distribution unavailable">
 <title>Language Landscape</title>
 <desc>Language distribution data is unavailable. The automated workflow will replace this status graphic after a successful collection.</desc>
 <rect x="1" y="1" width="1198" height="418" rx="20" fill="#101720" stroke="#294052" stroke-width="1"/>
-<text x="52" y="58" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="26" font-weight="700" letter-spacing="-0.4" fill="#F1F5F9">Language Landscape</text>
-<text x="52" y="82" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="14" fill="#CBD5E1">Distribution across my GitHub repositories</text>
-<line x1="52" y1="96" x2="1148" y2="96" stroke="#294052" stroke-width="1"/>
-<rect x="52" y="112" width="1096" height="236" rx="12" fill="#111B25" stroke="#294052" stroke-width="1"/>
+<text x="52" y="58" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="30" font-weight="700" letter-spacing="-0.6" fill="#F1F5F9">Language Landscape</text>
+<text x="52" y="82" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="15" fill="#CBD5E1">Languages across my GitHub repositories</text>
+<rect x="52" y="112" width="1096" height="236" rx="10" fill="#111B25" stroke="#294052" stroke-width="1"/>
 <text x="600" y="220" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace" font-size="16" fill="#CBD5E1">Data unavailable</text>
-<text x="600" y="244" text-anchor="middle" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="12" fill="#94A3B8">Run the workflow successfully to generate this chart.</text>
-<line x1="52" y1="372" x2="1148" y2="372" stroke="#294052" stroke-width="1"/>
-<text x="52" y="398" font-family="JetBrains Mono, Consolas, monospace" font-size="10" fill="#94A3B8">Based on code volume · Updated weekly</text>
-<circle cx="1138" cy="394" r="3" fill="#38BDF8"/>
+<text x="600" y="244" text-anchor="middle" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="13" fill="#94A3B8">Run the workflow successfully to generate this chart.</text>
 </svg>
 """
 
