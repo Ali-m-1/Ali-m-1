@@ -51,3 +51,22 @@ Through academic and personal projects, I enjoy exploring these fields, developi
   <a href="https://git-scm.com/doc" title="Git"><img src="./assets/skills/git.svg" alt="Git" title="Git" width="40" height="40"></a>&nbsp;&nbsp;
   <a href="https://docs.docker.com/" title="Docker"><img src="./assets/skills/docker.svg" alt="Docker" title="Docker" width="40" height="40"></a>
 </p>
+
+### <span style="color:#38BDF8">|</span> Featured Projects
+
+<table>
+  <tr>
+    <td width="50%" valign="top">
+      <img src="./assets/projects/project-placeholder.svg" alt="Project 01 placeholder preview" width="100%">
+      <h3>Project 01</h3>
+      <p>A short project description will be added here.</p>
+      <p><strong>Technology labels:</strong> Placeholder</p>
+    </td>
+    <td width="50%" valign="top">
+      <img src="./assets/projects/project-placeholder.svg" alt="Project 02 placeholder preview" width="100%">
+      <h3>Project 02</h3>
+      <p>A short project description will be added here.</p>
+      <p><strong>Technology labels:</strong> Placeholder</p>
+    </td>
+  </tr>
+</table>
