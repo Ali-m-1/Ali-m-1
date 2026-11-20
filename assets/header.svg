@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="400" viewBox="0 0 1200 400" role="img" aria-labelledby="header-title header-desc">
+  <title id="header-title">Hi, I'm [YOUR NAME]</title>
+  <desc id="header-desc">Engineering Student at École Centrale Casablanca. Interests include data analytics and business intelligence, machine learning and AI, operations research and optimization, and engineering real-world solutions.</desc>
+
+  <defs>
+    <linearGradient id="background" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#101720"/>
+      <stop offset="0.72" stop-color="#111D29"/>
+      <stop offset="1" stop-color="#10242F"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#38BDF8"/>
+      <stop offset="1" stop-color="#7DD3FC"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+      <stop offset="0" stop-color="#38BDF8" stop-opacity="0.16"/>
+      <stop offset="1" stop-color="#38BDF8" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="dots" width="24" height="24" patternUnits="userSpaceOnUse">
+      <circle cx="2" cy="2" r="1.5" fill="#38BDF8" opacity="0.13"/>
+    </pattern>
+    <filter id="shadow" x="-20%" y="-30%" width="140%" height="170%">
+      <feDropShadow dx="0" dy="10" stdDeviation="14" flood-color="#020617" flood-opacity="0.24"/>
+    </filter>
+  </defs>
+
+  <style>
+    .heading { font-family: "Segoe UI", Arial, sans-serif; font-weight: 700; letter-spacing: -1.4px; }
+    .subtitle { font-family: "Segoe UI", Arial, sans-serif; font-weight: 600; letter-spacing: 0.1px; }
+    .typing { font-family: "Cascadia Mono", Consolas, monospace; font-weight: 700; letter-spacing: 0.15px; }
+    .statement { font-family: "Segoe UI", Arial, sans-serif; font-weight: 400; letter-spacing: 0.1px; }
+    .cursor { fill: #38BDF8; animation: cursor-blink 1s steps(1, end) infinite; }
+    @keyframes cursor-blink {
+      0%, 48% { opacity: 1; }
+      49%, 100% { opacity: 0; }
+    }
+  </style>
+
+  <rect x="1" y="1" width="1198" height="398" rx="24" fill="url(#background)" stroke="#38BDF8" stroke-opacity="0.16"/>
+  <rect x="1" y="1" width="1198" height="398" rx="24" fill="url(#dots)" opacity="0.7"/>
+  <circle cx="1038" cy="70" r="170" fill="url(#glow)"/>
+
+  <g opacity="0.9" fill="none" stroke="#38BDF8" stroke-width="1.5">
+    <circle cx="1074" cy="92" r="58" stroke-opacity="0.18"/>
+    <circle cx="1074" cy="92" r="82" stroke-opacity="0.10"/>
+    <path d="M1074 34v116M1016 92h116" stroke-opacity="0.10"/>
+  </g>
+  <rect x="90" y="68" width="54" height="4" rx="2" fill="url(#accent)" filter="url(#shadow)"/>
+
+  <text class="heading" x="88" y="132" fill="#F1F5F9" font-size="62">Hi, I'm <tspan fill="#38BDF8">[YOUR NAME]</tspan></text>
+  <text class="subtitle" x="90" y="184" fill="#CBD5E1" font-size="28">Engineering Student at École Centrale Casablanca</text>
+
+  <rect x="88" y="222" width="3" height="62" rx="1.5" fill="#38BDF8" opacity="0.9"/>
+
+  <g clip-path="url(#typing-clip-1)">
+    <text class="typing" x="108" y="261" fill="#38BDF8" font-size="24">Data Analytics &amp; Business Intelligence</text>
+  </g>
+  <g clip-path="url(#typing-clip-2)">
+    <text class="typing" x="108" y="261" fill="#38BDF8" font-size="24">Machine Learning &amp; AI</text>
+  </g>
+  <g clip-path="url(#typing-clip-3)">
+    <text class="typing" x="108" y="261" fill="#38BDF8" font-size="24">Operations Research &amp; Optimization</text>
+  </g>
+  <g clip-path="url(#typing-clip-4)">
+    <text class="typing" x="108" y="261" fill="#38BDF8" font-size="24">Engineering Real-World Solutions</text>
+  </g>
+
+  <defs>
+    <clipPath id="typing-clip-1">
+      <rect x="108" y="228" width="0" height="40">
+        <animate attributeName="width" dur="32s" repeatCount="indefinite"
+          keyTimes="0;0.025;0.125;0.220;0.245;0.250;1"
+          values="0;0;540;540;0;0;0"/>
+      </rect>
+    </clipPath>
+    <clipPath id="typing-clip-2">
+      <rect x="108" y="228" width="0" height="40">
+        <animate attributeName="width" dur="32s" repeatCount="indefinite"
+          keyTimes="0;0.250;0.275;0.375;0.470;0.495;0.500;1"
+          values="0;0;0;300;300;0;0;0"/>
+      </rect>
+    </clipPath>
+    <clipPath id="typing-clip-3">
+      <rect x="108" y="228" width="0" height="40">
+        <animate attributeName="width" dur="32s" repeatCount="indefinite"
+          keyTimes="0;0.500;0.525;0.625;0.720;0.745;0.750;1"
+          values="0;0;0;520;520;0;0;0"/>
+      </rect>
+    </clipPath>
+    <clipPath id="typing-clip-4">
+      <rect x="108" y="228" width="0" height="40">
+        <animate attributeName="width" dur="32s" repeatCount="indefinite"
+          keyTimes="0;0.750;0.775;0.875;0.970;0.995;1"
+          values="0;0;0;470;470;0;0"/>
+      </rect>
+    </clipPath>
+  </defs>
+
+  <rect class="cursor" x="108" y="235" width="3" height="30" rx="1.5">
+    <animate attributeName="x" dur="32s" repeatCount="indefinite"
+      keyTimes="0;0.025;0.125;0.220;0.245;0.250;0.275;0.375;0.470;0.495;0.500;0.525;0.625;0.720;0.745;0.750;0.775;0.875;0.970;0.995;1"
+      values="108;108;648;648;108;108;108;408;408;108;108;108;628;628;108;108;108;578;578;108;108"/>
+  </rect>
+
+  <text class="statement" x="90" y="326" fill="#A6B3C2" font-size="20">
+    <tspan x="90">Interested in using data, intelligent systems, and optimization to solve</tspan>
+    <tspan x="90" dy="28">real-world engineering challenges.</tspan>
+  </text>
+</svg>
