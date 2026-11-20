@@ -39,7 +39,6 @@ Through academic and personal projects, I enjoy exploring these fields, developi
     </picture>
   </a>&nbsp;&nbsp;
   <a href="https://pyomo.readthedocs.io/en/latest/" title="Pyomo"><img src="./assets/skills/pyomo.png" alt="Pyomo" title="Pyomo" width="40" height="40"></a>&nbsp;&nbsp;
-  <a href="https://simpy.readthedocs.io/en/stable/" title="SimPy"><img src="./assets/skills/simpy.svg" alt="SimPy" title="SimPy" width="100" height="40"></a>&nbsp;&nbsp;
   <a href="https://www.mathworks.com/help/matlab/" title="MATLAB"><img src="./assets/skills/matlab.svg" alt="MATLAB" title="MATLAB" width="40" height="40"></a>&nbsp;&nbsp;
   <a href="https://docs.djangoproject.com/" title="Django">
     <picture>
