@@ -36,3 +36,11 @@ Thumbs.db
 language_stats.json
 repository_stats.json
 private_repositories.json
+
+
+git rm -r --cached .idea
+git rm -r --cached docs
+
+git add .gitignore
+git commit -m "Remove accidentally tracked files"
+git push
