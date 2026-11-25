@@ -1,33 +1,14 @@
 <svg xmlns="http://www.w3.org/2000/svg"
-     viewBox="0 0 180 80"
+     viewBox="0 0 40 40"
      role="img"
      aria-label="SQL">
 
-  <g fill="none"
-     stroke="#3498DB"
-     stroke-width="6"
-     stroke-linecap="round"
-     stroke-linejoin="round">
-
-    <!-- Database cylinder -->
-    <ellipse cx="34" cy="15" rx="30" ry="12"/>
-
-    <!-- Sides and bottom -->
-    <path d="M4 15V63
-             C4 79 64 79 64 63
-             V15"/>
-
-    <!-- Database layers -->
-    <path d="M4 31 C4 47 64 47 64 31"/>
-    <path d="M4 47 C4 63 64 63 64 47"/>
-
+  <g fill="none" stroke="#2682BC" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+    <ellipse cx="20" cy="7.5" rx="13" ry="4"/>
+    <path d="M7 7.5v13c0 2.2 5.8 4 13 4s13-1.8 13-4v-13"/>
+    <path d="M7 14c0 2.2 5.8 4 13 4s13-1.8 13-4"/>
   </g>
 
-  <!-- SQL lettering -->
-  <text x="76" y="55"
-        fill="#3498DB"
-        font-family="Arial Black, Arial, sans-serif"
-        font-size="48"
-        font-weight="900"
-        letter-spacing="-2">SQL</text>
+  <text x="20" y="36" text-anchor="middle" fill="#2682BC"
+        font-family="Arial, sans-serif" font-size="12" font-weight="700">SQL</text>
 </svg>

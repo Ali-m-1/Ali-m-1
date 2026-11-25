@@ -16,22 +16,45 @@ from typing import Iterable
 
 
 WIDTH = 1200
-HEIGHT = 450
+HEIGHT = 405
 MAP = (44.0, 116.0, 834.0, 412.0)
 CHART_X = 44.0
 CHART_Y = 116.0
 CHART_WIDTH = 790.0
 CHART_HEIGHT = 296.0
-LEGEND_X = 864.0
-LEGEND_RIGHT = 1156.0
+CARD_INSET = 32
+MAP_TOP = 64
+MAP_SCALE = 1.075
+MAP_TRANSFORM = f"translate({CARD_INSET} {MAP_TOP}) scale({MAP_SCALE}) translate({-CHART_X:g} {-CHART_Y:g})"
+LEGEND_X = 907
+LEGEND_RIGHT = WIDTH - CARD_INSET
+
+SVG_DIMENSIONS = f'viewBox="0 0 {WIDTH} {HEIGHT}" width="{WIDTH}" height="{HEIGHT}"'
+CHART_THEME = """<style>
+@media (prefers-color-scheme: light) {
+  .card-frame { fill: #F8FAFC; }
+  .map-frame { fill: #E8EFF3; }
+  .card-frame, .map-frame, .legend-rule { stroke: #CBD9E1; }
+  .chart-heading, .legend-share { fill: #172B3A; }
+  .chart-metadata, .legend-name { fill: #42576A; }
+}
+</style>"""
+CARD_FRAME = f'<rect class="card-frame" x="1" y="1" width="{WIDTH - 2}" height="{HEIGHT - 2}" rx="20" fill="#0F1B26" stroke="#2B4C62"/>'
+MAP_FRAME = '<rect class="map-frame" x="44" y="116" width="790" height="296" rx="10" fill="#142C3C" stroke="#2B4C62"/>'
+CHART_METADATA = (
+    f'<text class="chart-heading" x="{CARD_INSET}" y="41" font-family="Inter, Segoe UI, Arial, sans-serif" '
+    'font-size="19" font-weight="600" fill="#F1F5F9">Code volume</text>\n'
+    f'<text class="chart-metadata" x="{LEGEND_RIGHT}" y="41" text-anchor="end" font-family="Inter, Segoe UI, Arial, sans-serif" '
+    'font-size="15" font-weight="500" fill="#94A3B8">Updated weekly</text>'
+)
 
 LANGUAGE_PALETTE = {
-    "Jupyter Notebook": ("#F0A573", "#C77945", "#884422"),
-    "Python": ("#69C0EA", "#3289BD", "#164F81"),
-    "HTML": ("#ED8C7B", "#C95B52", "#8B3037"),
-    "CSS": ("#AE91DC", "#795FAD", "#463275"),
-    "JavaScript": ("#F0D579", "#D2AE49", "#977128"),
-    "Dockerfile": ("#74CBD3", "#4396A1", "#23636F"),
+    "Jupyter Notebook": ("#8F4947", "#802F2D", "#6A2A2A"),
+    "Python": ("#205258", "#003A40", "#03333A"),
+    "HTML": ("#24949C", "#05868E", "#077078"),
+    "CSS": ("#5D6B6E", "#47565A", "#3C4A4E"),
+    "JavaScript": ("#C88074", "#C26E60", "#9E5D53"),
+    "Dockerfile": ("#C19F8F", "#B99280", "#977A6D"),
 }
 
 LANGUAGE_COLORS = {
@@ -366,6 +389,17 @@ def deform_closed_cubic(
         deformed.append(f"{value + displacement:.1f}")
         coordinate_index += 1
     return " ".join(deformed)
+
+
+def compact_cubic_path(path: str) -> str:
+    """Serialize an existing M/C/Z contour without changing any coordinates."""
+    move, *curves = path.split(" C ")
+    compact = move + " C " + " ".join(curves)
+    compact = re.sub(r"(?<=\d)\.0(?=\s|$)", "", compact)
+    compact = re.sub(r"(?<![\d.])0\.(?=\d)", ".", compact)
+    compact = re.sub(r" *([MCZ]) *", r"\1", compact)
+    return compact.replace(" -", "-")
+
 
 def initial_sites(count: int, bounds: tuple[float, float, float, float]) -> list[tuple[float, float]]:
     if count < 1:
@@ -738,33 +772,15 @@ def generate_svg(entries: list[tuple[str, float]], username: str = "") -> str:
         key=lambda index: polygon_area(polygons[index]),
         default=-1,
     )
-    largest_polygon_index = max(
-        range(len(polygons)),
-        key=lambda index: polygon_area(polygons[index]),
-        default=-1,
-    )
     map_area = (MAP[2] - MAP[0]) * (MAP[3] - MAP[1])
     lines = [
-        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 450" width="1200" height="450" '
+        f'<svg xmlns="http://www.w3.org/2000/svg" {SVG_DIMENSIONS} '
         'role="img" aria-labelledby="chart-title chart-desc">',
         '<title id="chart-title">Language Landscape</title>',
         '<desc id="chart-desc">Programming language distribution across GitHub repositories, shown as a weighted territory diagram with a ranked legend.</desc>',
-        '<rect x="1" y="1" width="1198" height="448" rx="20" fill="#101720" stroke="#294052" stroke-width="1"/>',
-        '<text x="44" y="58" font-family="Inter, Segoe UI, Arial, sans-serif" '
-        'font-size="26" font-weight="700" letter-spacing="-0.4" fill="#F1F5F9">Language Landscape</text>',
-        '<text x="44" y="82" font-family="Inter, Segoe UI, Arial, sans-serif" '
-        'font-size="14" font-weight="400" fill="#CBD5E1">Distribution across my GitHub repositories</text>',
-        '<g transform="translate(1020 44)" fill="none" stroke="#38BDF8" '
-        'stroke-width="2" stroke-linecap="round" stroke-linejoin="round">'
-        '<path d="M14 8A6 6 0 0 0 4 3.53L2 5.33"/>'
-        '<polyline points="2 2 2 5.33 5.33 5.33"/>'
-        '<path d="M2 8A6 6 0 0 0 12 12.47L14 10.67"/>'
-        '<polyline points="14 14 14 10.67 10.67 10.67"/>'
-        '</g>',
-        '<text x="1156" y="60" text-anchor="end" font-family="Inter, Segoe UI, Arial, sans-serif" '
-        'font-size="15" font-weight="500" fill="#CBD5E1">Updated weekly</text>',
-        '<text x="1156" y="82" text-anchor="end" font-family="Inter, Segoe UI, Arial, sans-serif" '
-        'font-size="13" font-weight="400" fill="#94A3B8">Based on code volume</text>',
+        CHART_THEME,
+        CARD_FRAME,
+        CHART_METADATA,
     ]
 
     lines.append('<defs><clipPath id="map-clip"><rect x="44" y="116" width="790" height="296" rx="10"/></clipPath>')
@@ -795,7 +811,8 @@ def generate_svg(entries: list[tuple[str, float]], username: str = "") -> str:
                     '</linearGradient>'
                 )
     lines.append('</defs>')
-    lines.append('<rect x="44" y="116" width="790" height="296" rx="10" fill="#111B25" stroke="#294052" stroke-width="1"/>')
+    lines.append(f'<g transform="{MAP_TRANSFORM}">')
+    lines.append(MAP_FRAME)
     lines.append('<g clip-path="url(#map-clip)">')
     for (name, _), polygon in zip(entries, polygons):
         path = format_polygon(polygon)
@@ -837,6 +854,7 @@ def generate_svg(entries: list[tuple[str, float]], username: str = "") -> str:
                 )
                 for contour_index, contour_path in enumerate(contour_paths):
                     opacity = 0.42 - 0.12 * (contour_index / max(1, len(contour_paths) - 1))
+                    compact_contour = compact_cubic_path(contour_path)
                     animate = ""
                     if rank == largest_polygon_index:
                         seed = int(hashlib.sha256(name.encode("utf-8")).hexdigest()[:8], 16)
@@ -860,13 +878,11 @@ def generate_svg(entries: list[tuple[str, float]], username: str = "") -> str:
                             f'<animate attributeName="d" dur="{deformation_duration:.1f}s" repeatCount="indefinite" '
                             'calcMode="spline" keyTimes="0;0.33;0.67;1" '
                             'keySplines="0.42 0 0.58 1;0.42 0 0.58 1;0.42 0 0.58 1" '
-                            f'values="{saxutils.escape(contour_path)};'
-                            f'{saxutils.escape(variation_a)};'
-                            f'{saxutils.escape(variation_b)};'
-                            f'{saxutils.escape(contour_path)}"/>'
+                            f'values="{compact_contour};{compact_cubic_path(variation_a)};'
+                            f'{compact_cubic_path(variation_b)};{compact_contour}"/>'
                         )
                     lines.append(
-                        f'<path d="{contour_path}" fill="none" '
+                        f'<path d="{compact_contour}" fill="none" '
                         'stroke="#F1F5F9" '
                         f'stroke-width="1.4" stroke-opacity="{opacity:.2f}">'
                         f'{animate}</path>'
@@ -880,9 +896,10 @@ def generate_svg(entries: list[tuple[str, float]], username: str = "") -> str:
                 f'<path d="{path}" fill="none" stroke="#101720" stroke-width="1.5"/>'
             )
 
-    for (name, percentage), polygon in zip(entries, polygons):
+    for (name, _), polygon in zip(entries, polygons):
         _, color, _ = language_palette(name)
         ink = text_contrast(color)
+        outline = "#101720" if ink == "#F1F5F9" else "#F1F5F9"
         if len(polygon) >= 3:
             area = polygon_area(polygon)
             signed_double_area = sum(
@@ -908,59 +925,53 @@ def generate_svg(entries: list[tuple[str, float]], username: str = "") -> str:
                 cy = sum(point[1] for point in polygon) / len(polygon)
             if area / map_area >= 0.055:
                 lines.append(
-                    f'<text x="{cx:.1f}" y="{cy - 2:.1f}" text-anchor="middle" '
-                    'font-family="JetBrains Mono, Consolas, monospace" '
-                    f'font-size="12" font-weight="700" fill="{ink}" paint-order="stroke">'
-                    f'{saxutils.escape(name)}</text>'
+                    f'<text x="{cx:.1f}" y="{cy + 5:.1f}" '
+                    'text-anchor="middle" font-family="Inter, Segoe UI, Arial, sans-serif" '
+                    f'fill="{ink}" stroke="{outline}" stroke-opacity="0.75" '
+                    'stroke-width="2.5" stroke-linejoin="round" paint-order="stroke"'
+                    f' font-size="16" font-weight="700">{saxutils.escape(name)}</text>'
                 )
-                lines.append(
-                    f'<text x="{cx:.1f}" y="{cy + 16:.1f}" text-anchor="middle" '
-                    'font-family="JetBrains Mono, Consolas, monospace" '
-                    f'font-size="11" fill="{ink}" opacity="0.82" paint-order="stroke">{percentage:.1f}%</text>'
-                )
-    lines.append("</g>")
+    lines.append("</g></g>")
 
-    row_step = 25
-    legend_header_y = CHART_Y + CHART_HEIGHT / 2.0 - ((len(entries) - 1) * row_step + 14) / 2.0
-    lines.append(f'<text x="{LEGEND_X:.0f}" y="{legend_header_y:.1f}" font-family="JetBrains Mono, Consolas, monospace" '
+    row_step = 27
+    first_row_offset = 32
+    map_center_y = MAP_TOP + CHART_HEIGHT * MAP_SCALE / 2.0
+    legend_header_y = map_center_y - ((len(entries) - 1) * row_step + first_row_offset) / 2.0
+    lines.append(f'<text class="chart-metadata" x="{LEGEND_X:.0f}" y="{legend_header_y:.1f}" font-family="JetBrains Mono, Consolas, monospace" '
                  'font-size="11" fill="#94A3B8" letter-spacing="1.8">LANGUAGE</text>')
-    lines.append(f'<text x="{LEGEND_RIGHT:.0f}" y="{legend_header_y:.1f}" text-anchor="end" font-family="JetBrains Mono, Consolas, monospace" '
+    lines.append(f'<text class="chart-metadata" x="{LEGEND_RIGHT:.0f}" y="{legend_header_y:.1f}" text-anchor="end" font-family="JetBrains Mono, Consolas, monospace" '
                  'font-size="11" fill="#94A3B8" letter-spacing="1.2">SHARE</text>')
+    divider_y = legend_header_y + 10
+    lines.append(f'<line class="legend-rule" x1="{LEGEND_X:.0f}" x2="{LEGEND_RIGHT:.0f}" y1="{divider_y:.1f}" y2="{divider_y:.1f}" stroke="#2B4C62"/>')
     for index, (name, percentage) in enumerate(entries):
-        y = legend_header_y + 25 + index * row_step
+        y = legend_header_y + first_row_offset + index * row_step
         _, color, _ = language_palette(name)
-        lines.append(f'<rect x="{LEGEND_X:.0f}" y="{y - 10:.1f}" width="10" height="10" rx="2" fill="{color}"/>')
+        lines.append(f'<rect x="{LEGEND_X:.0f}" y="{y - 12:.1f}" width="11" height="11" rx="2" fill="{color}"/>')
         lines.append(
-            f'<text x="886" y="{y:.1f}" font-family="Inter, Segoe UI, Arial, sans-serif" '
-            f'font-size="13" font-weight="600" fill="#CBD5E1">{saxutils.escape(name)}</text>'
+            f'<text class="legend-name" x="{LEGEND_X + 22}" y="{y:.1f}" font-family="Inter, Segoe UI, Arial, sans-serif" '
+            f'font-size="17" font-weight="600" fill="#CBD5E1">{saxutils.escape(name)}</text>'
         )
         lines.append(
-            f'<text x="{LEGEND_RIGHT:.0f}" y="{y:.1f}" text-anchor="end" '
+            f'<text class="legend-share" x="{LEGEND_RIGHT:.0f}" y="{y:.1f}" text-anchor="end" '
             'font-family="JetBrains Mono, Consolas, monospace" '
-            f'font-size="13" fill="#CBD5E1">{percentage:.1f}%</text>'
+            f'font-size="17" font-weight="600" fill="#F1F5F9">{percentage:.1f}%</text>'
         )
     lines.append('</svg>')
     return "\n".join(lines) + "\n"
 
 
 def generate_unavailable_svg() -> str:
-    return """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 450" width="1200" height="450" role="img" aria-label="Programming language distribution unavailable">
+    return f"""<svg xmlns="http://www.w3.org/2000/svg" {SVG_DIMENSIONS} role="img" aria-label="Programming language distribution unavailable">
 <title>Language Landscape</title>
 <desc>Language distribution data is unavailable. The automated workflow will replace this status graphic after a successful collection.</desc>
-<rect x="1" y="1" width="1198" height="448" rx="20" fill="#101720" stroke="#294052" stroke-width="1"/>
-<text x="44" y="58" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="26" font-weight="700" letter-spacing="-0.4" fill="#F1F5F9">Language Landscape</text>
-<text x="44" y="82" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="14" fill="#CBD5E1">Distribution across my GitHub repositories</text>
-<g transform="translate(1024 44)" fill="none" stroke="#38BDF8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-<path d="M14 8A6 6 0 0 0 4 3.53L2 5.33"/>
-<polyline points="2 2 2 5.33 5.33 5.33"/>
-<path d="M2 8A6 6 0 0 0 12 12.47L14 10.67"/>
-<polyline points="14 14 14 10.67 10.67 10.67"/>
+{CHART_THEME}
+{CARD_FRAME}
+{CHART_METADATA}
+<g transform="{MAP_TRANSFORM}">
+{MAP_FRAME}
+<text class="chart-heading" x="439" y="252" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace" font-size="16" fill="#CBD5E1">Data unavailable</text>
+<text class="chart-metadata" x="439" y="276" text-anchor="middle" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="12" fill="#94A3B8">Run the workflow successfully to generate this chart.</text>
 </g>
-<text x="1156" y="60" text-anchor="end" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="15" font-weight="500" fill="#CBD5E1">Updated weekly</text>
-<text x="1156" y="82" text-anchor="end" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="13" font-weight="400" fill="#94A3B8">Based on code volume</text>
-<rect x="44" y="116" width="790" height="296" rx="10" fill="#111B25" stroke="#294052" stroke-width="1"/>
-<text x="439" y="252" text-anchor="middle" font-family="JetBrains Mono, Consolas, monospace" font-size="16" fill="#CBD5E1">Data unavailable</text>
-<text x="439" y="276" text-anchor="middle" font-family="Inter, Segoe UI, Arial, sans-serif" font-size="12" fill="#94A3B8">Run the workflow successfully to generate this chart.</text>
 </svg>
 """
 

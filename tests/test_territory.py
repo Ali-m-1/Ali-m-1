@@ -10,6 +10,7 @@ from scripts.fetch_languages import (
 )
 from scripts.generate_territory import (
     choose_top_languages,
+    compact_cubic_path,
     deform_closed_cubic,
     formation_drift,
     adaptive_contour_count,
@@ -183,6 +184,10 @@ class GeometryTests(unittest.TestCase):
 
 
 class SVGGenerationTests(unittest.TestCase):
+    def test_compact_contour_keeps_coordinate_precision(self):
+        path = "M 0.0 -0.5 C 1.0 2.3 -1.2 4.0 5.0 6.0 C 7.0 8.0 9.0 10.0 0.0 -0.5 Z"
+        self.assertEqual(compact_cubic_path(path), "M0-.5C1 2.3-1.2 4 5 6 7 8 9 10 0-.5Z")
+
     def test_all_territories_have_path_deformation(self):
         svg = generate_svg([
             ("Python", 40.0),
@@ -300,7 +305,7 @@ class SVGGenerationTests(unittest.TestCase):
     def test_premium_palette_and_fallback_are_valid(self):
         self.assertEqual(
             language_palette("Python"),
-            ("#69C0EA", "#3289BD", "#164F81"),
+            ("#205258", "#003A40", "#03333A"),
         )
         fallback = language_palette("Elixir")
         self.assertEqual(len(fallback), 3)
@@ -314,12 +319,12 @@ class SVGGenerationTests(unittest.TestCase):
             ("HTML", 20.0),
             ("Other", 15.0),
         ])
-        self.assertIn('viewBox="0 0 1200 450"', svg)
+        self.assertIn('viewBox="0 0 1200 405"', svg)
         self.assertIn("<title id=", svg)
         self.assertIn("<desc id=", svg)
         self.assertIn("Language Landscape", svg)
-        self.assertIn("Distribution across my GitHub repositories", svg)
-        self.assertIn('#3289BD', svg)
+        self.assertIn(">Code volume</text>", svg)
+        self.assertIn('#003A40', svg)
         self.assertIn('gradientUnits="objectBoundingBox"', svg)
         self.assertIn('x1="0%" y1="0%" x2="100%" y2="100%"', svg)
         self.assertIn('fill="url(#language-gradient-', svg)
@@ -328,27 +333,24 @@ class SVGGenerationTests(unittest.TestCase):
         self.assertIn('<g id="formation-', svg)
         self.assertIn('stroke="#F1F5F9"', svg)
         self.assertIn('stroke-width="1.4"', svg)
-        self.assertIn("40.0%", svg)
-        self.assertIn('fill="#101720"', svg)
+        for share in ("40.0%", "25.0%", "20.0%", "15.0%"):
+            self.assertEqual(svg.count(f">{share}</text>"), 1)
+        self.assertIn('fill="#0F1B26" stroke="#2B4C62"', svg)
         self.assertIn("Updated weekly", svg)
-        self.assertIn("Based on code volume", svg)
         self.assertIn('x="44" y="116" width="790" height="296" rx="10"', svg)
-        self.assertIn('x="864"', svg)
-        self.assertIn('x="1156"', svg)
-        self.assertIn('stroke="#38BDF8"', svg)
-        self.assertIn('stroke-width="2"', svg)
-        self.assertIn('font-size="15" font-weight="500" fill="#CBD5E1">Updated weekly</text>', svg)
-        self.assertIn('font-size="13" font-weight="400" fill="#94A3B8">Based on code volume</text>', svg)
+        self.assertIn('x="907"', svg)
+        self.assertIn('x="1168"', svg)
+        self.assertIn('fill="#F1F5F9" stroke="#101720" stroke-opacity="0.75"', svg)
         self.assertIn('font-size="11" fill="#94A3B8" letter-spacing="1.8">LANGUAGE</text>', svg)
-        self.assertIn('font-size="13" font-weight="600" fill="#CBD5E1">Python</text>', svg)
-        self.assertIn('font-size="13" fill="#CBD5E1">40.0%</text>', svg)
+        self.assertIn('font-size="17" font-weight="600" fill="#CBD5E1">Python</text>', svg)
+        self.assertIn('font-size="17" font-weight="600" fill="#F1F5F9">40.0%</text>', svg)
         self.assertNotIn("<circle", svg)
         self.assertNotIn('<path d=""', svg)
 
     def test_unavailable_svg_is_safe_status_output(self):
         svg = generate_unavailable_svg()
         self.assertIn("Data unavailable", svg)
-        self.assertIn('viewBox="0 0 1200 450"', svg)
+        self.assertIn('viewBox="0 0 1200 405"', svg)
 
 
 if __name__ == "__main__":
