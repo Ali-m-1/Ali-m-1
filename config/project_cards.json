@@ -1,0 +1,86 @@
+[
+  {
+    "slug": "warehouse-manager",
+    "title": "Warehouse Manager",
+    "category": "Returns & stock management",
+    "repository_url": "https://github.com/Ali-m-1/Warehouse_Manager_Showcase",
+    "description": "Track replacement-part returns and recovered stock for medical equipment.",
+    "technologies": [
+      {
+        "name": "Python",
+        "icon": "assets/skills/python.svg"
+      },
+      {
+        "name": "Django",
+        "icon": "assets/skills/django-dark.svg"
+      },
+      {
+        "name": "SQLite",
+        "icon": "assets/skills/sqlite-dark.svg"
+      }
+    ],
+    "image": "assets/projects/visuals/warehouse-manager-cover.png"
+  },
+  {
+    "slug": "contract-creator",
+    "title": "Contract Creator",
+    "category": "Document automation",
+    "repository_url": "https://github.com/Ali-m-1/contract_creator_showcase",
+    "description": "Prepare maintenance contracts with pricing, PDF generation, and revision history.",
+    "technologies": [
+      {
+        "name": "Python",
+        "icon": "assets/skills/python.svg"
+      },
+      {
+        "name": "Django",
+        "icon": "assets/skills/django-dark.svg"
+      },
+      {
+        "name": "Tailwind CSS",
+        "icon": "assets/skills/tailwind-css.svg"
+      }
+    ],
+    "image": "assets/projects/visuals/contract-creator-cover.png"
+  },
+  {
+    "slug": "when-ml-fails",
+    "title": "When ML Fails",
+    "category": "Machine learning",
+    "repository_url": "https://github.com/Ali-m-1/When-ML-fails",
+    "description": "Diagnose temporal shortcuts and class imbalance in purchase prediction.",
+    "technologies": [
+      {
+        "name": "Python",
+        "icon": "assets/skills/python.svg"
+      },
+      {
+        "name": "Pandas",
+        "icon": "assets/skills/pandas-dark.svg"
+      },
+      {
+        "name": "scikit-learn",
+        "icon": "assets/skills/scikit-learn.svg"
+      }
+    ],
+    "image": "assets/projects/visuals/when-ml-fails-cover.png"
+  },
+  {
+    "slug": "green-cloud",
+    "title": "Green Cloud",
+    "category": "IoT & machine learning",
+    "repository_url": "https://github.com/TStephB/Green-Cloud",
+    "description": "Explore sensor monitoring and ML-based cooling for a mini data center.",
+    "technologies": [
+      {
+        "name": "Python",
+        "icon": "assets/skills/python.svg"
+      },
+      {
+        "name": "scikit-learn",
+        "icon": "assets/skills/scikit-learn.svg"
+      }
+    ],
+    "image": "assets/projects/visuals/green-cloud-cover.png"
+  }
+]
